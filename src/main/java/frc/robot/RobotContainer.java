@@ -5,8 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -26,6 +28,8 @@ public class RobotContainer {
   // Declare the controller
   private final XboxController PRIMARY_CONTROLLER =
       new XboxController(OperatorConstants.kDriverControllerPort);
+
+  private static final SendableChooser<SequentialCommandGroup> m_automodeChooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -55,6 +59,16 @@ public class RobotContainer {
   
   }
 
+  private void autoModeChooser()
+  {
+    m_automodeChooser.setDefaultOption("Do nothing", new SequentialCommandGroup());
+    m_automodeChooser.addOption("Drive forward", new SequentialCommandGroup(
+     DRIVE_SUBSYSTEM.run(() -> DRIVE_SUBSYSTEM.teleop(0.5, 0.0))
+      .withTimeout(5)
+      .andThen(() -> DRIVE_SUBSYSTEM.stop())
+     ));
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -62,6 +76,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return m_automodeChooser.getSelected();
   }
 }
+
