@@ -89,6 +89,11 @@ public class DriveSubsystem extends SubsystemBase{
     m_drivetrain.arcadeDrive(speed, turn);
   }
 
+  public void stop()
+  {
+    m_drivetrain.arcadeDrive(0, 0);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
